@@ -1,93 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Polinations - Test Build</title>
+<meta charset="UTF-8">
+<title>Polinations Forums Mock</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #0f172a;
-        color: #e2e8f0;
-        margin: 0;
-        padding: 0;
-    }
+body {
+    font-family: Arial;
+    background:#0f172a;
+    color:#e2e8f0;
+    margin:0;
+}
 
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 20px;
-    }
+.container {
+    max-width:900px;
+    margin:auto;
+    padding:20px;
+}
 
-    h1 {
-        text-align: center;
-    }
+.card {
+    background:#1e293b;
+    padding:15px;
+    margin-top:15px;
+    border-radius:10px;
+}
 
-    .card {
-        background: #1e293b;
-        padding: 20px;
-        border-radius: 10px;
-        margin-top: 20px;
-    }
+input, textarea {
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border-radius:6px;
+    border:none;
+}
 
-    input, select, textarea {
-        width: 100%;
-        padding: 10px;
-        margin-top: 10px;
-        border-radius: 5px;
-        border: none;
-    }
+button {
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    border-radius:6px;
+    background:#38bdf8;
+    font-weight:bold;
+    cursor:pointer;
+}
 
-    button {
-        margin-top: 15px;
-        padding: 10px;
-        width: 100%;
-        border: none;
-        border-radius: 5px;
-        background: #38bdf8;
-        cursor: pointer;
-        font-weight: bold;
-    }
+.post, .forum {
+    background:#0f172a;
+    padding:10px;
+    margin-top:10px;
+    border-radius:6px;
+    border-left:3px solid #38bdf8;
+    cursor:pointer;
+}
 
-    button:hover {
-        background: #0ea5e9;
-    }
+.hidden { display:none; }
 
-    .hidden {
-        display: none;
-    }
-
-    .stat {
-        margin: 8px 0;
-        background: #334155;
-        border-radius: 5px;
-        overflow: hidden;
-    }
-
-    .bar {
-        height: 10px;
-        background: #22c55e;
-    }
-
-    .flag {
-        width: 100px;
-        height: 60px;
-        border-radius: 5px;
-        margin-top: 10px;
-    }
-
-    .post {
-        background: #0f172a;
-        padding: 10px;
-        margin-top: 10px;
-        border-radius: 8px;
-        border-left: 3px solid #38bdf8;
-    }
-
-    .post small {
-        color: #94a3b8;
-    }
+.small { font-size:12px; color:#94a3b8; }
 </style>
 </head>
 
@@ -95,171 +63,162 @@
 
 <div class="container">
 
-    <h1>Polinations (Test Build)</h1>
+<h1>Polinations Forum System</h1>
 
-    <!-- CREATE NATION -->
-    <div id="createScreen" class="card">
-        <h2>Create Your Nation</h2>
+<!-- GLOBAL -->
+<div class="card">
+    <h2>🌍 Global Forum</h2>
 
-        <input id="nationName" placeholder="Nation Name" />
-        <input id="leaderName" placeholder="Leader Name (optional)" />
+    <textarea id="globalText" placeholder="Post to global..."></textarea>
+    <button onclick="postGlobal()">Post</button>
 
-        <select id="government">
-            <option>Democracy</option>
-            <option>Dictatorship</option>
-            <option>Monarchy</option>
-            <option>Republic</option>
-            <option>Other</option>
-        </select>
+    <div id="globalPosts"></div>
+</div>
 
-        <input id="ideology" placeholder="Ideology (optional)" />
-        <input id="flagColor" type="color" value="#ff0000" />
+<!-- CREATE FORUM -->
+<div class="card">
+    <h2>Create Forum (Subreddit)</h2>
+    <input id="forumName" placeholder="Forum name">
+    <button onclick="createForum()">Create</button>
+</div>
 
-        <button onclick="createNation()">Create Nation</button>
-    </div>
+<!-- FORUM LIST -->
+<div class="card">
+    <h2>Forums</h2>
+    <div id="forumList"></div>
+</div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="card hidden">
-        <h2 id="dName"></h2>
+<!-- FORUM VIEW -->
+<div class="card hidden" id="forumView">
+    <h2 id="forumTitle"></h2>
 
-        <div id="flag" class="flag"></div>
+    <textarea id="forumText" placeholder="Post here..."></textarea>
+    <button onclick="postForum()">Post</button>
 
-        <p><b>Leader:</b> <span id="dLeader"></span></p>
-        <p><b>Government:</b> <span id="dGov"></span></p>
-        <p><b>Ideology:</b> <span id="dIdeology"></span></p>
+    <div id="forumPosts"></div>
 
-        <h3>Stats</h3>
-
-        <p>Economy</p>
-        <div class="stat"><div id="ecoBar" class="bar" style="width:50%"></div></div>
-
-        <p>Stability</p>
-        <div class="stat"><div id="stabBar" class="bar" style="width:50%"></div></div>
-
-        <p>Military</p>
-        <div class="stat"><div id="milBar" class="bar" style="width:50%"></div></div>
-
-        <p>Influence</p>
-        <div class="stat"><div id="infBar" class="bar" style="width:10%"></div></div>
-
-        <button onclick="resetGame()">Reset Nation</button>
-    </div>
-
-    <!-- FORUM -->
-    <div id="forum" class="card hidden">
-        <h2>🌍 Global Forum</h2>
-
-        <textarea id="postContent" placeholder="Write something to the world..."></textarea>
-        <button onclick="createPost()">Post</button>
-
-        <div id="posts"></div>
-    </div>
+    <button onclick="closeForum()">Back</button>
+</div>
 
 </div>
 
 <script>
-let nation = null;
-let posts = [];
 
-function createNation() {
-    nation = {
-        name: document.getElementById("nationName").value || "Unnamed Nation",
-        leader: document.getElementById("leaderName").value || "Unknown",
-        government: document.getElementById("government").value,
-        ideology: document.getElementById("ideology").value || "Neutral",
-        flagColor: document.getElementById("flagColor").value,
-        stats: {
-            economy: 50,
-            stability: 50,
-            military: 50,
-            influence: 10
-        }
-    };
+let globalForum = {
+    posts: []
+};
 
-    sessionStorage.setItem("nation", JSON.stringify(nation));
+let forums = [];
+let currentForum = null;
 
-    loadDashboard();
-    loadForum();
-}
+/* GLOBAL */
 
-function loadDashboard() {
-    document.getElementById("createScreen").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-    document.getElementById("forum").classList.remove("hidden");
+function postGlobal() {
+    const text = document.getElementById("globalText").value;
+    if (!text) return;
 
-    document.getElementById("dName").innerText = nation.name;
-    document.getElementById("dLeader").innerText = nation.leader;
-    document.getElementById("dGov").innerText = nation.government;
-    document.getElementById("dIdeology").innerText = nation.ideology;
-
-    document.getElementById("flag").style.background = nation.flagColor;
-
-    updateBars();
-}
-
-function updateBars() {
-    document.getElementById("ecoBar").style.width = nation.stats.economy + "%";
-    document.getElementById("stabBar").style.width = nation.stats.stability + "%";
-    document.getElementById("milBar").style.width = nation.stats.military + "%";
-    document.getElementById("infBar").style.width = nation.stats.influence + "%";
-}
-
-/* ---------------- FORUM SYSTEM ---------------- */
-
-function createPost() {
-    const content = document.getElementById("postContent").value;
-    if (!content) return;
-
-    const post = {
-        author: nation.name,
-        content: content,
+    globalForum.posts.unshift({
+        author: "Player",
+        content: text,
         time: new Date().toLocaleTimeString()
-    };
+    });
 
-    posts.unshift(post);
-    document.getElementById("postContent").value = "";
-
-    renderPosts();
+    document.getElementById("globalText").value = "";
+    renderGlobal();
 }
 
-function renderPosts() {
-    const container = document.getElementById("posts");
-    container.innerHTML = "";
+function renderGlobal() {
+    const el = document.getElementById("globalPosts");
+    el.innerHTML = "";
 
-    posts.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "post";
-        div.innerHTML = `
-            <b>${p.author}</b><br/>
-            ${p.content}
-            <br/><small>${p.time}</small>
+    globalForum.posts.forEach(p => {
+        el.innerHTML += `
+            <div class="post">
+                <b>${p.author}</b><br>
+                ${p.content}<br>
+                <small>${p.time}</small>
+            </div>
         `;
-        container.appendChild(div);
     });
 }
 
-/* ---------------- RESET ---------------- */
+/* FORUMS */
 
-function resetGame() {
-    sessionStorage.removeItem("nation");
-    location.reload();
+function createForum() {
+    const name = document.getElementById("forumName").value;
+    if (!name) return;
+
+    forums.unshift({
+        id: crypto.randomUUID(),
+        name,
+        posts: []
+    });
+
+    document.getElementById("forumName").value = "";
+    renderForums();
 }
 
-/* ---------------- LOAD ON START ---------------- */
+function renderForums() {
+    const el = document.getElementById("forumList");
+    el.innerHTML = "";
 
-window.onload = () => {
-    let saved = sessionStorage.getItem("nation");
-    if (saved) {
-        nation = JSON.parse(saved);
-        loadDashboard();
-        loadForum();
-    }
-};
-
-function loadForum() {
-    document.getElementById("forum").classList.remove("hidden");
-    renderPosts();
+    forums.forEach(f => {
+        const div = document.createElement("div");
+        div.className = "forum";
+        div.innerHTML = `<b>${f.name}</b><br><span class="small">Custom forum</span>`;
+        div.onclick = () => openForum(f.id);
+        el.appendChild(div);
+    });
 }
+
+function openForum(id) {
+    currentForum = forums.find(f => f.id === id);
+
+    document.getElementById("forumView").classList.remove("hidden");
+    document.getElementById("forumTitle").innerText = currentForum.name;
+
+    renderForumPosts();
+}
+
+function postForum() {
+    const text = document.getElementById("forumText").value;
+    if (!text || !currentForum) return;
+
+    currentForum.posts.unshift({
+        author: "Player",
+        content: text,
+        time: new Date().toLocaleTimeString()
+    });
+
+    document.getElementById("forumText").value = "";
+    renderForumPosts();
+}
+
+function renderForumPosts() {
+    const el = document.getElementById("forumPosts");
+    el.innerHTML = "";
+
+    currentForum.posts.forEach(p => {
+        el.innerHTML += `
+            <div class="post">
+                <b>${p.author}</b><br>
+                ${p.content}<br>
+                <small>${p.time}</small>
+            </div>
+        `;
+    });
+}
+
+function closeForum() {
+    currentForum = null;
+    document.getElementById("forumView").classList.add("hidden");
+}
+
+/* INIT */
+
+renderGlobal();
+renderForums();
+
 </script>
 
 </body>
