@@ -112,3 +112,15 @@ Monetization exists to sustain the platform, not to shape the outcome of the gam
 These rules are part of the core design contract of the project. Any future feature proposal must be evaluated against this document before implementation.
 
 Deviations require a full revision of this policy and explicit transparency to players.
+
+---
+
+## Why?
+
+These rules have been implemented because i am prsonally fed up with pay-to-win mechanics in almost every game now. But how can this be ran? well as of right now it cant, at least not how you'd want it to. Currently we operate on free tiers only as i dont expect this game to grow (ever).
+
+---
+
+## If these rules are broken
+
+If you ever find a feature that in your eyes is pay-to-win please contact a developer, we try our best to give the free an advantage!
