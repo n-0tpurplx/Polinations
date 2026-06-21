@@ -117,10 +117,16 @@ Deviations require a full revision of this policy and explicit transparency to p
 
 ## Why?
 
-These rules have been implemented because i am prsonally fed up with pay-to-win mechanics in almost every game now. But how can this be ran? well as of right now it cant, at least not how you'd want it to. Currently we operate on free tiers only as i dont expect this game to grow (ever).
+These rules exist because the developer is strongly opposed to pay-to-win mechanics, which have become increasingly common in modern games.
+
+The goal of this project is to ensure that success is always determined by player strategy, coordination, and decision-making — not financial advantage.
+
+At the time of writing, the game operates on a free-tier model with optional supporter monetization. This may evolve in the future strictly under the constraints defined in this document.
 
 ---
 
 ## If these rules are broken
 
-If you ever find a feature that in your eyes is pay-to-win please contact a developer, we try our best to give the free an advantage!
+If you believe a feature violates the no pay-to-win principles, please report it to the development team.
+
+All feedback will be reviewed carefully. The goal is to maintain a fair and competitive environment where free players remain fully competitive.
