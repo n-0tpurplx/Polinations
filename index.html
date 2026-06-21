@@ -15,7 +15,7 @@
     }
 
     .container {
-        max-width: 800px;
+        max-width: 900px;
         margin: auto;
         padding: 20px;
     }
@@ -31,7 +31,7 @@
         margin-top: 20px;
     }
 
-    input, select {
+    input, select, textarea {
         width: 100%;
         padding: 10px;
         margin-top: 10px;
@@ -75,6 +75,18 @@
         height: 60px;
         border-radius: 5px;
         margin-top: 10px;
+    }
+
+    .post {
+        background: #0f172a;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 8px;
+        border-left: 3px solid #38bdf8;
+    }
+
+    .post small {
+        color: #94a3b8;
     }
 </style>
 </head>
@@ -133,10 +145,21 @@
         <button onclick="resetGame()">Reset Nation</button>
     </div>
 
+    <!-- FORUM -->
+    <div id="forum" class="card hidden">
+        <h2>🌍 Global Forum</h2>
+
+        <textarea id="postContent" placeholder="Write something to the world..."></textarea>
+        <button onclick="createPost()">Post</button>
+
+        <div id="posts"></div>
+    </div>
+
 </div>
 
 <script>
 let nation = null;
+let posts = [];
 
 function createNation() {
     nation = {
@@ -145,7 +168,6 @@ function createNation() {
         government: document.getElementById("government").value,
         ideology: document.getElementById("ideology").value || "Neutral",
         flagColor: document.getElementById("flagColor").value,
-
         stats: {
             economy: 50,
             stability: 50,
@@ -155,12 +177,15 @@ function createNation() {
     };
 
     sessionStorage.setItem("nation", JSON.stringify(nation));
+
     loadDashboard();
+    loadForum();
 }
 
 function loadDashboard() {
     document.getElementById("createScreen").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("forum").classList.remove("hidden");
 
     document.getElementById("dName").innerText = nation.name;
     document.getElementById("dLeader").innerText = nation.leader;
@@ -179,19 +204,62 @@ function updateBars() {
     document.getElementById("infBar").style.width = nation.stats.influence + "%";
 }
 
+/* ---------------- FORUM SYSTEM ---------------- */
+
+function createPost() {
+    const content = document.getElementById("postContent").value;
+    if (!content) return;
+
+    const post = {
+        author: nation.name,
+        content: content,
+        time: new Date().toLocaleTimeString()
+    };
+
+    posts.unshift(post);
+    document.getElementById("postContent").value = "";
+
+    renderPosts();
+}
+
+function renderPosts() {
+    const container = document.getElementById("posts");
+    container.innerHTML = "";
+
+    posts.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "post";
+        div.innerHTML = `
+            <b>${p.author}</b><br/>
+            ${p.content}
+            <br/><small>${p.time}</small>
+        `;
+        container.appendChild(div);
+    });
+}
+
+/* ---------------- RESET ---------------- */
+
 function resetGame() {
     sessionStorage.removeItem("nation");
     location.reload();
 }
 
-// auto-load if exists
+/* ---------------- LOAD ON START ---------------- */
+
 window.onload = () => {
     let saved = sessionStorage.getItem("nation");
     if (saved) {
         nation = JSON.parse(saved);
         loadDashboard();
+        loadForum();
     }
 };
+
+function loadForum() {
+    document.getElementById("forum").classList.remove("hidden");
+    renderPosts();
+}
 </script>
 
 </body>
