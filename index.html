@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Polinations Forums Mock</title>
+<title>Polinations - Full Test Mock</title>
 
 <style>
 body {
@@ -25,7 +25,7 @@ body {
     border-radius:10px;
 }
 
-input, textarea {
+input, textarea, select {
     width:100%;
     padding:10px;
     margin-top:8px;
@@ -44,6 +44,8 @@ button {
     cursor:pointer;
 }
 
+button:hover { background:#0ea5e9; }
+
 .post, .forum {
     background:#0f172a;
     padding:10px;
@@ -56,43 +58,84 @@ button {
 .hidden { display:none; }
 
 .small { font-size:12px; color:#94a3b8; }
+
+.flag {
+    width:100px;
+    height:60px;
+    border-radius:6px;
+    margin-top:10px;
+}
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>Polinations Forum System</h1>
+<h1>Polinations (Restored Test Build)</h1>
 
-<!-- GLOBAL -->
-<div class="card">
+<!-- NATION CREATION -->
+<div id="nationCreator" class="card">
+    <h2>Create Nation</h2>
+
+    <input id="nationName" placeholder="Nation Name">
+    <input id="leaderName" placeholder="Leader Name">
+
+    <select id="government">
+        <option>Democracy</option>
+        <option>Dictatorship</option>
+        <option>Monarchy</option>
+        <option>Republic</option>
+        <option>Other</option>
+    </select>
+
+    <input id="ideology" placeholder="Ideology">
+    <input id="flagColor" type="color" value="#ff0000">
+
+    <button onclick="createNation()">Enter World</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="card hidden">
+    <h2 id="dName"></h2>
+
+    <div id="flag" class="flag"></div>
+
+    <p><b>Leader:</b> <span id="dLeader"></span></p>
+    <p><b>Government:</b> <span id="dGov"></span></p>
+    <p><b>Ideology:</b> <span id="dIdeology"></span></p>
+</div>
+
+<!-- GLOBAL FORUM -->
+<div id="global" class="card hidden">
     <h2>🌍 Global Forum</h2>
 
-    <textarea id="globalText" placeholder="Post to global..."></textarea>
+    <textarea id="globalText" placeholder="Post to global world..."></textarea>
     <button onclick="postGlobal()">Post</button>
 
     <div id="globalPosts"></div>
 </div>
 
 <!-- CREATE FORUM -->
-<div class="card">
+<div id="forumCreate" class="card hidden">
     <h2>Create Forum (Subreddit)</h2>
+
     <input id="forumName" placeholder="Forum name">
-    <button onclick="createForum()">Create</button>
+    <button onclick="createForum()">Create Forum</button>
 </div>
 
 <!-- FORUM LIST -->
-<div class="card">
+<div id="forumList" class="card hidden">
     <h2>Forums</h2>
-    <div id="forumList"></div>
+    <div id="forums"></div>
 </div>
 
 <!-- FORUM VIEW -->
-<div class="card hidden" id="forumView">
+<div id="forumView" class="card hidden">
     <h2 id="forumTitle"></h2>
 
-    <textarea id="forumText" placeholder="Post here..."></textarea>
+    <textarea id="forumText" placeholder="Write post..."></textarea>
     <button onclick="postForum()">Post</button>
 
     <div id="forumPosts"></div>
@@ -104,21 +147,49 @@ button {
 
 <script>
 
-let globalForum = {
-    posts: []
-};
+/* ---------------- NATION ---------------- */
 
-let forums = [];
-let currentForum = null;
+let nation = null;
 
-/* GLOBAL */
+function createNation() {
+    nation = {
+        name: document.getElementById("nationName").value || "Unnamed Nation",
+        leader: document.getElementById("leaderName").value || "Unknown",
+        government: document.getElementById("government").value,
+        ideology: document.getElementById("ideology").value || "Neutral",
+        flagColor: document.getElementById("flagColor").value
+    };
+
+    sessionStorage.setItem("nation", JSON.stringify(nation));
+
+    document.getElementById("nationCreator").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("global").classList.remove("hidden");
+    document.getElementById("forumCreate").classList.remove("hidden");
+    document.getElementById("forumList").classList.remove("hidden");
+
+    loadNation();
+}
+
+function loadNation() {
+    document.getElementById("dName").innerText = nation.name;
+    document.getElementById("dLeader").innerText = nation.leader;
+    document.getElementById("dGov").innerText = nation.government;
+    document.getElementById("dIdeology").innerText = nation.ideology;
+
+    document.getElementById("flag").style.background = nation.flagColor;
+}
+
+/* ---------------- GLOBAL FORUM ---------------- */
+
+let globalPosts = [];
 
 function postGlobal() {
     const text = document.getElementById("globalText").value;
     if (!text) return;
 
-    globalForum.posts.unshift({
-        author: "Player",
+    globalPosts.unshift({
+        author: nation.name,
         content: text,
         time: new Date().toLocaleTimeString()
     });
@@ -131,7 +202,7 @@ function renderGlobal() {
     const el = document.getElementById("globalPosts");
     el.innerHTML = "";
 
-    globalForum.posts.forEach(p => {
+    globalPosts.forEach(p => {
         el.innerHTML += `
             <div class="post">
                 <b>${p.author}</b><br>
@@ -142,7 +213,10 @@ function renderGlobal() {
     });
 }
 
-/* FORUMS */
+/* ---------------- FORUMS ---------------- */
+
+let forums = [];
+let currentForum = null;
 
 function createForum() {
     const name = document.getElementById("forumName").value;
@@ -159,13 +233,13 @@ function createForum() {
 }
 
 function renderForums() {
-    const el = document.getElementById("forumList");
+    const el = document.getElementById("forums");
     el.innerHTML = "";
 
     forums.forEach(f => {
         const div = document.createElement("div");
         div.className = "forum";
-        div.innerHTML = `<b>${f.name}</b><br><span class="small">Custom forum</span>`;
+        div.innerHTML = `<b>${f.name}</b><br><span class="small">Subforum</span>`;
         div.onclick = () => openForum(f.id);
         el.appendChild(div);
     });
@@ -185,7 +259,7 @@ function postForum() {
     if (!text || !currentForum) return;
 
     currentForum.posts.unshift({
-        author: "Player",
+        author: nation.name,
         content: text,
         time: new Date().toLocaleTimeString()
     });
@@ -214,10 +288,26 @@ function closeForum() {
     document.getElementById("forumView").classList.add("hidden");
 }
 
-/* INIT */
+/* ---------------- INIT ---------------- */
 
-renderGlobal();
-renderForums();
+window.onload = () => {
+    let saved = sessionStorage.getItem("nation");
+
+    if (saved) {
+        nation = JSON.parse(saved);
+
+        document.getElementById("nationCreator").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("global").classList.remove("hidden");
+        document.getElementById("forumCreate").classList.remove("hidden");
+        document.getElementById("forumList").classList.remove("hidden");
+
+        loadNation();
+    }
+
+    renderGlobal();
+    renderForums();
+};
 
 </script>
 
