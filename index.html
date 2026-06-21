@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Polinations - Test Build</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #e2e8f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .card {
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: none;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px;
+        width: 100%;
+        border: none;
+        border-radius: 5px;
+        background: #38bdf8;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #0ea5e9;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .stat {
+        margin: 8px 0;
+        background: #334155;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .bar {
+        height: 10px;
+        background: #22c55e;
+    }
+
+    .flag {
+        width: 100px;
+        height: 60px;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Polinations (Test Build)</h1>
+
+    <!-- CREATE NATION -->
+    <div id="createScreen" class="card">
+        <h2>Create Your Nation</h2>
+
+        <input id="nationName" placeholder="Nation Name" />
+        <input id="leaderName" placeholder="Leader Name (optional)" />
+
+        <select id="government">
+            <option>Democracy</option>
+            <option>Dictatorship</option>
+            <option>Monarchy</option>
+            <option>Republic</option>
+            <option>Other</option>
+        </select>
+
+        <input id="ideology" placeholder="Ideology (optional)" />
+        <input id="flagColor" type="color" value="#ff0000" />
+
+        <button onclick="createNation()">Create Nation</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="card hidden">
+        <h2 id="dName"></h2>
+
+        <div id="flag" class="flag"></div>
+
+        <p><b>Leader:</b> <span id="dLeader"></span></p>
+        <p><b>Government:</b> <span id="dGov"></span></p>
+        <p><b>Ideology:</b> <span id="dIdeology"></span></p>
+
+        <h3>Stats</h3>
+
+        <p>Economy</p>
+        <div class="stat"><div id="ecoBar" class="bar" style="width:50%"></div></div>
+
+        <p>Stability</p>
+        <div class="stat"><div id="stabBar" class="bar" style="width:50%"></div></div>
+
+        <p>Military</p>
+        <div class="stat"><div id="milBar" class="bar" style="width:50%"></div></div>
+
+        <p>Influence</p>
+        <div class="stat"><div id="infBar" class="bar" style="width:10%"></div></div>
+
+        <button onclick="resetGame()">Reset Nation</button>
+    </div>
+
+</div>
+
+<script>
+let nation = null;
+
+function createNation() {
+    nation = {
+        name: document.getElementById("nationName").value || "Unnamed Nation",
+        leader: document.getElementById("leaderName").value || "Unknown",
+        government: document.getElementById("government").value,
+        ideology: document.getElementById("ideology").value || "Neutral",
+        flagColor: document.getElementById("flagColor").value,
+
+        stats: {
+            economy: 50,
+            stability: 50,
+            military: 50,
+            influence: 10
+        }
+    };
+
+    sessionStorage.setItem("nation", JSON.stringify(nation));
+    loadDashboard();
+}
+
+function loadDashboard() {
+    document.getElementById("createScreen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+
+    document.getElementById("dName").innerText = nation.name;
+    document.getElementById("dLeader").innerText = nation.leader;
+    document.getElementById("dGov").innerText = nation.government;
+    document.getElementById("dIdeology").innerText = nation.ideology;
+
+    document.getElementById("flag").style.background = nation.flagColor;
+
+    updateBars();
+}
+
+function updateBars() {
+    document.getElementById("ecoBar").style.width = nation.stats.economy + "%";
+    document.getElementById("stabBar").style.width = nation.stats.stability + "%";
+    document.getElementById("milBar").style.width = nation.stats.military + "%";
+    document.getElementById("infBar").style.width = nation.stats.influence + "%";
+}
+
+function resetGame() {
+    sessionStorage.removeItem("nation");
+    location.reload();
+}
+
+// auto-load if exists
+window.onload = () => {
+    let saved = sessionStorage.getItem("nation");
+    if (saved) {
+        nation = JSON.parse(saved);
+        loadDashboard();
+    }
+};
+</script>
+
+</body>
+</html>
